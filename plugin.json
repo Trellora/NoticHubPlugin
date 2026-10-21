@@ -1,0 +1,18 @@
+{
+  "id": "com.expertkt.notice-hub",
+  "name": "群务台 · notice-hub 同步",
+  "version": "1.0.0",
+  "description": "把 notice-hub（群务台）的通知、待办与截止时间同步进 Trellora 日程。",
+  "author": "ExpertKT（notice-hub 原作者）／Trellora 插件化适配",
+  "license": "SEE LICENSE (PolyForm-Noncommercial-1.0.0 AND MIT)",
+  "main": "main.js",
+  "engine": { "trellora": ">=1.3.0" },
+  "permissions": ["ui:command", "schedule:write", "system:network", "system:file"],
+  "activation": ["onStartup"],
+  "contributes": {
+    "uiCommands": [
+      { "id": "notice-hub:sync-now", "title": "同步群务台", "panel": "sidebar" },
+      { "id": "notice-hub:reset-cache", "title": "重置群务台缓存", "panel": "sidebar" }
+    ]
+  }
+}

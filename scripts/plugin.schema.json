@@ -1,0 +1,132 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://trellora.app/schemas/plugin.schema.json",
+  "title": "Trellora Plugin Manifest",
+  "description": "JSON Schema for plugin.json. 插件清单 schema。",
+  "type": "object",
+  "required": ["id", "name", "version", "main", "engine", "permissions", "activation"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Reverse-DNS unique plugin id (e.g. com.example.markdown-extra).",
+      "pattern": "^[a-z0-9]+(\\.[a-z0-9-]+)*$",
+      "minLength": 3,
+      "maxLength": 128
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable display name.",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "version": {
+      "type": "string",
+      "description": "Semver version of the plugin itself.",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-zA-Z0-9.]+)?$"
+    },
+    "description": { "type": "string", "maxLength": 512 },
+    "author": { "type": "string", "maxLength": 128 },
+    "license": { "type": "string", "maxLength": 64 },
+    "main": {
+      "type": "string",
+      "description": "Entry module path relative to the plugin root.",
+      "pattern": "^[^/\\\\].*\\.(js|mjs|cjs)$",
+      "maxLength": 256
+    },
+    "engine": {
+      "type": "object",
+      "description": "Trellora engine compatibility range.",
+      "required": ["trellora"],
+      "additionalProperties": false,
+      "properties": {
+        "trellora": {
+          "type": "string",
+          "description": "Semver range against Trellora version (e.g. \">=1.3.0\").",
+          "minLength": 1,
+          "maxLength": 64
+        }
+      }
+    },
+    "permissions": {
+      "type": "array",
+      "description": "Requested permissions. L1 capability and L2 system permissions.",
+      "items": {
+        "type": "string",
+        "enum": [
+          "pipeline:parse",
+          "ai:provider",
+          "ui:command",
+          "data:source",
+          "schedule:write",
+          "system:file",
+          "system:network",
+          "system:subprocess"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "activation": {
+      "type": "array",
+      "description": "Events that trigger plugin activation.",
+      "items": {
+        "type": "string",
+        "enum": ["onStartup", "onParseRequest", "onAiRequest", "onUiCommand", "*"]
+      },
+      "uniqueItems": true
+    },
+    "contributes": {
+      "type": "object",
+      "description": "Optional static contribution declarations (mirror the runtime registrations).",
+      "additionalProperties": false,
+      "properties": {
+        "parsingRoutes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["extension", "route"],
+            "additionalProperties": false,
+            "properties": {
+              "extension": { "type": "string", "pattern": "^\\.[a-z0-9]+$" },
+              "route": { "type": "string", "minLength": 1, "maxLength": 64 }
+            }
+          }
+        },
+        "aiProviders": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "api"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string", "pattern": "^[a-z0-9-]+$", "minLength": 1, "maxLength": 64 },
+              "api": {
+                "type": "string",
+                "enum": [
+                  "ollama-chat",
+                  "openai-completions",
+                  "openai-responses",
+                  "anthropic-messages",
+                  "google-generate-content"
+                ]
+              }
+            }
+          }
+        },
+        "uiCommands": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "title"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string", "pattern": "^[a-z0-9:-]+$", "minLength": 1, "maxLength": 64 },
+              "title": { "type": "string", "minLength": 1, "maxLength": 64 },
+              "panel": { "type": "string", "enum": ["sidebar", "command-palette", "toolbar"] }
+            }
+          }
+        }
+      }
+    }
+  }
+}
